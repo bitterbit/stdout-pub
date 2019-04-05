@@ -7,14 +7,16 @@
 <script>  
 window.addEventListener("load", function(evt) {
 
-    var output = document.getElementById("output");
     var input = document.getElementById("input");
     var ws;
 
+    var term = new Terminal();
+    term.open(document.getElementById('terminal'));
+
     var print = function(message) {
-        var d = document.createElement("div");
-        d.innerHTML = message;
-        output.appendChild(d);
+        // var d = document.createElement("div");
+        // d.innerHTML = message;
+        term.writeln(" $ " + message);
     };
 
     document.getElementById("open").onclick = function(evt) {
@@ -71,7 +73,7 @@ You can change the message and send multiple times.</p>
 <button id="send">Send</button>
 </form>
 </td><td valign="top" width="50%">
-<div id="output"></div>
+    <div id="terminal"></div>
 </td></tr></table>
 </body>
 </html>
