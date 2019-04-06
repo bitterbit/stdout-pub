@@ -24,7 +24,7 @@ type DashboardMessage struct {
 type RoddyServer struct {
         upgrader websocket.Upgrader
         index []byte
-        pipers map[string]chan DashboardMessage
+        pipers chan DashboardMessage
 }
 
 func NewRoddyServer(indexPath string) *RoddyServer {
@@ -32,7 +32,7 @@ func NewRoddyServer(indexPath string) *RoddyServer {
     return &RoddyServer{
         upgrader:  websocket.Upgrader{},
         index: index,
-        pipers: make(map[string]chan DashboardMessage),
+        pipers: make(chan DashboardMessage, ChanCapacity),
     }
 }
 
@@ -66,14 +66,10 @@ func (this *RoddyServer) handlePiperWS(w http.ResponseWriter, r *http.Request){
         }
         log.Printf("recv: %s mt: %v", message, mt)
 
-        if _, exists := this.pipers[piperName]; !exists {
-            this.pipers[piperName] = make(chan DashboardMessage, ChanCapacity)
-        }
-        ch := this.pipers[piperName]
 
         // No more space, discard old messages
-        if len(ch) == cap(ch) {
-            m := <-ch
+        if len(this.pipers) == cap(this.pipers) {
+            m := <-this.pipers
             log.Printf("Discarding old message. msg: %+v\n", m)
         }
 
@@ -83,8 +79,8 @@ func (this *RoddyServer) handlePiperWS(w http.ResponseWriter, r *http.Request){
             Message: string(message),
         }
 
-        ch <- dashboardMessage
-        log.Printf("Done sending. len: %v cap: %v\n", len(ch), cap(ch))
+        this.pipers <- dashboardMessage
+        log.Printf("Done sending. len: %v cap: %v\n", len(this.pipers), cap(this.pipers))
     }
 
 }
@@ -99,10 +95,9 @@ func (this *RoddyServer) handleDashboardWS(w http.ResponseWriter, r *http.Reques
     defer c.Close()
 
     for {
-        for _, ch := range this.pipers {
-            message := <-ch
-            c.WriteJSON(message)
-        }
+        log.Printf("Getting message")
+        message := <-this.pipers
+        c.WriteJSON(message)
     }
 }
 
