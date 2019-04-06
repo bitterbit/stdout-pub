@@ -32,7 +32,7 @@ window.addEventListener("load", function(evt) {
         ws.onmessage = function(evt) {
             var msg = JSON.parse(evt.data);
             var color = colors[Math.abs(msg.Source.hashCode()) % colors.length]
-            term.writeln(" $ ["+color + msg.Date + clearColor +"] " + msg.Message)
+            term.writeln(" $ "+color + "["+msg.Date+"]" + clearColor + msg.Message)
             // print("RESPONSE: " + evt.data);
         }
         ws.onerror = function(evt) {

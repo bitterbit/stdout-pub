@@ -2,6 +2,8 @@ package server
 
 import (
 	"log"
+        "fmt"
+        "time"
 	"net/http"
         "io/ioutil"
 
@@ -73,8 +75,9 @@ func (this *RoddyServer) handlePiperWS(w http.ResponseWriter, r *http.Request){
             log.Printf("Discarding old message. msg: %+v\n", m)
         }
 
+        t := time.Now()
         dashboardMessage := DashboardMessage{
-            Date: "now",
+            Date: fmt.Sprintf("%v %v %v:%v:%v", t.Day(), t.Month(), t.Hour(), t.Minute(), t.Second()),
             Source: piperName,
             Message: string(message),
         }
