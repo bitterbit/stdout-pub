@@ -46,7 +46,7 @@ func (this *RoddyServer) handleHome(w http.ResponseWriter, r *http.Request){
 
 func (thisn *RoddyServer) loggingMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        log.Println(r.RequestURI)
+        log.Printf("%v - %v", r.RemoteAddr, r.RequestURI)
         next.ServeHTTP(w, r)
     })
 }
@@ -83,7 +83,6 @@ func (this *RoddyServer) handlePiperWS(w http.ResponseWriter, r *http.Request){
         }
 
         this.pipers <- dashboardMessage
-        log.Printf("Done sending. len: %v cap: %v\n", len(this.pipers), cap(this.pipers))
     }
 
 }
@@ -98,7 +97,6 @@ func (this *RoddyServer) handleDashboardWS(w http.ResponseWriter, r *http.Reques
     defer c.Close()
 
     for {
-        log.Printf("Getting message")
         message := <-this.pipers
         c.WriteJSON(message)
     }
