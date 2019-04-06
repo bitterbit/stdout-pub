@@ -20,10 +20,20 @@ import (
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
 
-func pipeStdin(ws *websocket.Conn){
-        stdin := bufio.NewScanner(os.Stdin)
-        for stdin.Scan() {
-            ws.WriteMessage(websocket.TextMessage, stdin.Bytes())
+func pipeStdin(ws *websocket.Conn, done chan int){
+        stdin := bufio.NewReaderSize(os.Stdin, 1024)
+
+        defer ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+
+        for  {
+            line, err := stdin.ReadBytes('\n')
+            if err != nil {
+                log.Printf("err: %v", err)
+                done <- 0
+                return
+            }
+
+            ws.WriteMessage(websocket.TextMessage, line)
         }
 }
 
@@ -43,30 +53,31 @@ func main() {
 	}
 
 	defer c.Close()
-	done := make(chan struct{})
+	done := make(chan int)
 
-        go pipeStdin(c)
+        go pipeStdin(c, done)
 
 	for {
 		select {
 		case <-done:
-			return
+                    log.Printf("Done chan")
+                    return
 
 		case <-interrupt:
-			log.Println("interrupt")
+                    log.Println("interrupt")
 
-			// Cleanly close the connection by sending a close message and then
-			// waiting (with timeout) for the server to close the connection.
-			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-			if err != nil {
-				log.Println("write close:", err)
-				return
-			}
-			select {
-			case <-done:
-			case <-time.After(time.Second):
-			}
-			return
+                    // Cleanly close the connection by sending a close message and then
+                    // waiting (with timeout) for the server to close the connection.
+                    err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+                    if err != nil {
+                            log.Println("write close:", err)
+                            return
+                    }
+                    select {
+                    case <-done:
+                    case <-time.After(time.Second):
+                    }
+                    return
 		}
 	}
 }
