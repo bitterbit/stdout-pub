@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="static/css/bulma.css" />
     <link rel="stylesheet" href="static/xterm/xterm.css" />
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
     <script>var exports = exports || {};</script>
 
@@ -28,6 +29,36 @@
         html {
             background-color: black;
         } 
+        a, p {
+            font-family: Lucida Console, Lucida Sans Typewriter, monaco, Bitstream Vera Sans Mono, monospace;
+        }
+        .icon i {
+            color: #ffffffcc; 
+        }
+        .icon i:hover {
+            color: #00d1b2aa; 
+        }
+
+        a.navbar-item {
+            font-size: 14px;
+            color: #8a8a8a;
+        }
+
+        a.navbar-item:hover {
+            color: #ffffffcc; 
+            background-color: #00000000;
+        }
+
+        #title, #title-sep {
+            font-size: 18px;
+            cursor: default;
+            color: #8a8a8a;
+        }
+
+        #title:hover {
+            /*color: #4a4a4a;*/
+            color: #8a8a8a;
+        }
 
         .container { 
             max-width: 100%; 
@@ -37,21 +68,24 @@
         #terminal {
             padding: 10px;
             margin: 10px;
-            /*border: 1px solid black;
-            border-radius: 3px;*/
         }
     </style>
 </head>
+<!--
+<span class="icon">
+    <a href="https://github.com/bitterbit/piper-roddy"><i class="fa fa-github"></i></a>
+</span
+-->
+
 <body>
     <section class="hero-head">
         <header class="navbar">
             <div class="container">
-                <div class="navbar-barnd">
-                    <div class="navbar-item">
-                        <a href="#" class="navbar-item">
-                            Hellow Bluma!
-                        </a>
-                    </div>
+                <div class="navbar-menu">
+                    <a class="navbar-item" id="title" href="#">piper-roddy</a>
+                    <span class="navbar-item" id="title-sep" href="#">&#183;</span>
+                    <a class="navbar-item" href="#refresh">refresh</a>
+                    <a class="navbar-item" href="#clear">clear</a>
                 </div>
             </div>
         </header>
