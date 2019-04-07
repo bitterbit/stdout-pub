@@ -13,30 +13,62 @@ var initTerminal = function(theme) {
     }
 
     var print = function(message) {
-        term.writeln(" $ " + message);
+        term.writeln(" dashboard > " + message);
     };
 
+    var waitForConnection = function(){}; 
+
     var start = function() {
-        if (ws) {
+        console.log("start", ws);
+        if (ws && ws.readyState != WebSocket.OPEN) {
             return false;
         }
-        ws = new WebSocket("ws://" + document.location.host+ "/ws/dashboard");
+        if (!ws) {
+            ws = new WebSocket("ws://" + document.location.host+ "/ws/dashboard");
+        } else {
+            print("Connected to roddy!");
+        }
+        
         ws.onopen = function(evt) {
-            print("OPEN");
+            print("Connected to roddy!");
         }
         ws.onclose = function(evt) {
-            print("CLOSE");
+            print("Disconnected from roddy");
             ws = null;
+            print("Waiting for new connection...");
+            waitForConnection();
         }
         ws.onmessage = function(evt) {
             var msg = JSON.parse(evt.data);
             var color = colors[Math.abs(msg.Source.hashCode()) % colors.length]
-            term.writeln(" $ "+color + "["+msg.Date+"]" + clearColor + msg.Message.trimEnd())
+            term.writeln(" $ "+color + "["+msg.Date+"] " + clearColor + msg.Message.trimEnd()+clearColor);
         }
         ws.onerror = function(evt) {
             print("ERROR: " + evt.data);
         }
         return false;
+    };
+
+    waitForConnection = function(){
+        var interval = 1000;
+        var tmpws = new WebSocket("ws://" + document.location.host+ "/ws/dashboard");
+
+        var onnot = function() { setTimeout(waitForConnection, interval); };
+        var onconnect = function(){
+            ws = tmpws;
+            start();
+        };
+
+        tmpws.onopen = onconnect; 
+        tmpws.onclose = onnot;
+
+        if (tmpws.readyState == WebSocket.CLOSED) {
+            return onnot();
+        } else if (tmpws.readyState == WebSocket.CONNECTED) {
+            return onconnect();
+        }
+
+        console.log("other?", tmpws);
     };
 
     var getColors = function() {
@@ -53,6 +85,8 @@ var initTerminal = function(theme) {
 
     var colors = getColors();
     start();
+
+    return term;
 }
 
 String.prototype.hashCode = function() {
