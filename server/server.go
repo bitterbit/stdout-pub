@@ -96,9 +96,22 @@ func (this *RoddyServer) handleDashboardWS(w http.ResponseWriter, r *http.Reques
     }
     defer c.Close()
 
+    closeChan := make(chan int)
+
+    go func(){
+        if _, _, err = c.ReadMessage(); err != nil {
+            closeChan <- 0
+            log.Printf("err: %v", err)
+        }
+    }()
+
     for {
-        message := <-this.pipers
-        c.WriteJSON(message)
+        select {
+            case message := <-this.pipers:
+                c.WriteJSON(message)
+            case <- closeChan:
+                return;
+        }
     }
 }
 
