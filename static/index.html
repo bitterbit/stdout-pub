@@ -4,13 +4,58 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css" />
     <link rel="stylesheet" href="static/xterm/xterm.css" />
+
+    <script>var exports = exports || {};</script>
+
     <script src="static/xterm/xterm.js"></script>
     <script src="static/ws-terminal.js"></script>
-    <script>  
-        window.addEventListener("load", function(evt) { initTerminal();});
+    <script type="module" >  
+        var theme = {
+            background: "#000", 
+            foreground: "#eee", 
+            selection: "#00d1b2aa"
+        }
+        
+        import * as fit from '/static/xterm/fit.js';
+
+        window.addEventListener("load", function(evt) { 
+            initTerminal(theme);
+        });
     </script>
+
+    <!-- #00d1b2 -->
+    <style>
+        html {
+            background-color: black;
+        } 
+
+        .container { 
+            max-width: 100%; 
+            background-color: #111;
+        }
+        
+        #terminal {
+            padding: 10px;
+            margin: 10px;
+            /*border: 1px solid black;
+            border-radius: 3px;*/
+        }
+    </style>
 </head>
 <body>
+    <section class="hero-head">
+        <header class="navbar">
+            <div class="container">
+                <div class="navbar-barnd">
+                    <div class="navbar-item">
+                        <a href="#" class="navbar-item">
+                            Hellow Bluma!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </section>
     <div id="terminal"></div>
 </body>
 </html>

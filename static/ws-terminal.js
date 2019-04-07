@@ -1,9 +1,16 @@
-var initTerminal = function() {
+var term; // for easy debugging
+
+var initTerminal = function(theme) {
     var clearColor = "\x1B[0m";
 
     var ws;
-    var term = new Terminal();
+    term = new Terminal();
     term.open(document.getElementById('terminal'));
+    exports.fit(term);
+
+    if (theme != undefined) {
+        term.setOption("theme", theme);
+    }
 
     var print = function(message) {
         term.writeln(" $ " + message);
@@ -24,8 +31,7 @@ var initTerminal = function() {
         ws.onmessage = function(evt) {
             var msg = JSON.parse(evt.data);
             var color = colors[Math.abs(msg.Source.hashCode()) % colors.length]
-            term.writeln(" $ "+color + "["+msg.Date+"]" + clearColor + msg.Message)
-            // print("RESPONSE: " + evt.data);
+            term.writeln(" $ "+color + "["+msg.Date+"]" + clearColor + msg.Message.trimEnd())
         }
         ws.onerror = function(evt) {
             print("ERROR: " + evt.data);
@@ -59,5 +65,3 @@ String.prototype.hashCode = function() {
     }
     return hash;
 };
-
-
