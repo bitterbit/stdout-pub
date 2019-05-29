@@ -1,5 +1,5 @@
 # piper-roddy
-Pipe stdout from cli-executables to WebSocket server with a web dashboard.
+Share stdout as a web application, oipe stdout from cli-executables to WebSocket server with a web dashboard.
 
 ![Screenshot](https://github.com/bitterbit/piper-roddy/raw/master/imgs/screenshot.png)
 ## Build
