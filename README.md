@@ -8,6 +8,11 @@ stdout-pub is made out of two executables:
 ![Screenshot](https://github.com/bitterbit/piper-roddy/raw/master/imgs/screenshot.png)
 ## Build
 ``` bash
+# Dependencies
+$ go get github.com/gorilla/mux
+$ go get github.com/gorilla/websocket
+
+# Install
 $ go build cmd/piper.go
 $ go build cmd/robby.go
 ```
