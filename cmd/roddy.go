@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"log"
-        "github.com/bitterbit/piper-roddy/server"
+        "github.com/bitterbit/stdout-pub/server"
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
